@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {setPlayerName, startGame, pauseGame} from "../../redux/actions/gameActions";
+import {setPlayerName, startGame, pauseGame, resumeGame} from "../../redux/actions/gameActions";
 import {Game} from "../../components/Game";
 import {NameForm} from "../../components/NameForm";
 import {PauseMenu} from "../../components/Menu/PauseMenu";
@@ -17,7 +17,7 @@ class GameContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { playerName, startGame } = this.props;
+    const {playerName, startGame} = this.props;
     if (!prevProps.playerName && playerName) {
       startGame();
     }
@@ -43,32 +43,33 @@ class GameContainer extends Component {
   };
 
   handleStart = (name) => {
-      this.props.setPlayerName(name);
-      this.props.startGame();
+    this.props.setPlayerName(name);
+    this.props.startGame();
   };
 
   render() {
-    const { wall, playerName, pause, startGame} = this.props;
+    const {wall, playerName, started, pause, resumeGame} = this.props;
     return (
       <Game wall={wall}>
-        {!pause && !playerName && <NameForm name={playerName} onSubmit={this.handleStart}/>}
-        {pause && playerName && <PauseMenu onResume={startGame}/>}
+        {!started && <NameForm name={playerName} onSubmit={this.handleStart}/>}
+        {pause && playerName && <PauseMenu onResume={resumeGame}/>}
       </Game>
     )
   }
 }
 
-const mapStateToProps = ({ gameState }) => ({
-    ...gameState
+const mapStateToProps = ({gameState}) => ({
+  ...gameState
 });
 const mapDispatchToProps = dispatcher =>
-    bindActionCreators(
-        {
-            setPlayerName,
-            startGame,
-            pauseGame
-        },
-        dispatcher
-    );
+  bindActionCreators(
+    {
+      setPlayerName,
+      startGame,
+      pauseGame,
+      resumeGame
+    },
+    dispatcher
+  );
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameContainer);
