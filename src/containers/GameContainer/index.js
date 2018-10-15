@@ -1,41 +1,12 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {setPlayerName, startGame, pauseGame} from "../../redux/actions/gameActions";
 import {Game} from "../../components/Game";
 import {NameForm} from "../../components/NameForm";
 import {PauseMenu} from "../../components/Menu/PauseMenu";
 
-const wall = [
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-  [0, 0, 0, 0, 1, 1, 1, 1, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-];
-
-export default class GameContainer extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: '',
-      pause: false,
-      started: false
-    }
-  }
+class GameContainer extends Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.pressKey);
@@ -45,8 +16,15 @@ export default class GameContainer extends Component {
     document.removeEventListener('keydown', this.pressKey);
   }
 
+  componentDidUpdate(prevProps) {
+    const { playerName, startGame } = this.props;
+    if (!prevProps.playerName && playerName) {
+      startGame();
+    }
+  }
+
   pressKey = (e) => {
-    const {name, pause} = this.state;
+    const {pause, startGame, pauseGame} = this.props;
     switch (e.key) {
       case 'ArrowUp':
         break;
@@ -57,7 +35,7 @@ export default class GameContainer extends Component {
       case 'ArrowDown':
         break;
       case 'Escape':
-        this.setState({...this.state, pause: name ? !pause : false});
+        pause ? startGame() : pauseGame();
         break;
       default:
         break;
@@ -65,20 +43,32 @@ export default class GameContainer extends Component {
   };
 
   handleStart = (name) => {
-    this.setState({...this.state, name: name, started: true});
-  };
-
-  onResume = () => {
-    this.setState({...this.state, pause: false});
+      this.props.setPlayerName(name);
+      this.props.startGame();
   };
 
   render() {
-    const {pause, started} = this.state;
+    const { wall, playerName, pause, startGame} = this.props;
     return (
       <Game wall={wall}>
-        {!started && <NameForm onSubmit={this.handleStart}/>}
-        {pause && started && <PauseMenu onResume={this.onResume}/>}
+        {!pause && !playerName && <NameForm name={playerName} onSubmit={this.handleStart}/>}
+        {pause && playerName && <PauseMenu onResume={startGame}/>}
       </Game>
     )
   }
 }
+
+const mapStateToProps = ({ gameState }) => ({
+    ...gameState
+});
+const mapDispatchToProps = dispatcher =>
+    bindActionCreators(
+        {
+            setPlayerName,
+            startGame,
+            pauseGame
+        },
+        dispatcher
+    );
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameContainer);

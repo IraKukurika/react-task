@@ -3,9 +3,19 @@ import PropTypes from 'prop-types';
 import {AppGame} from "./styles";
 
 export const Game = ({wall, children}) => {
+
+  let hasChildren = false;
+  if (children.length) {
+    children.map((child) => {
+      return child ? hasChildren = child : null;
+    });
+  } else if (children) {
+    hasChildren = true;
+  }
+
   return (
     <AppGame>
-      <div className={`game-field ${children ? 'blurred' : ''}`}>
+      <div className={`game-field ${hasChildren ? 'blurred' : ''}`}>
         {
           wall.map((arr) =>
             arr.map((x, y) =>
@@ -15,9 +25,7 @@ export const Game = ({wall, children}) => {
         }
       </div>
       {
-        children.map((child, index) => (
-          child && <div key={index} className='overlay'>{children}</div>
-        ))
+        hasChildren && <div className='overlay'>{children}</div>
       }
     </AppGame>
   )

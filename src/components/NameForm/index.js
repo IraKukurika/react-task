@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import {Formik} from 'formik';
 import {AppForm} from "./styles";
 
-export const NameForm = ({onSubmit}) => {
+export const NameForm = ({name, onSubmit}) => {
   return (
     <AppForm>
       <Formik
-        initialValues={{name: ''}}
+        initialValues={{name: name}}
         onSubmit={(values) => {
           onSubmit(values.name);
         }}
