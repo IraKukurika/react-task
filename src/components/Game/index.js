@@ -35,7 +35,7 @@ export const Game = ({wall, children}) => {
 Game.propTypes = {
   wall: PropTypes.arrayOf(
     PropTypes.arrayOf(
-      PropTypes.number
+      PropTypes.bool
     )
   ).isRequired
 };
