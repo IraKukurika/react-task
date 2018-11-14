@@ -1,21 +1,10 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import moment from 'moment';
+import { FormattedMessage, FormattedTime } from 'react-intl';
 import AppHeaderWrap from './style';
 
-const addLeadingZero = (n = '') => {
-  const str = `${n}`;
-  switch (str.length) {
-    case 0:
-      return '00';
-    case 1:
-      return `0${n}`;
-    default:
-      return `${n}`;
-  }
-};
-
-const AppHeader = ({playerName, points, time}) => {
+const AppHeader = ({playerName, points, time, intl}) => {
   const duration = moment.duration(time, 'seconds');
 
   return (
@@ -23,7 +12,9 @@ const AppHeader = ({playerName, points, time}) => {
       <table>
         <tbody>
         <tr>
-          <td>Player:</td>
+          <td>
+            <FormattedMessage id="player" defaultMessage="Player" />:
+          </td>
           <td>{playerName || ''}</td>
         </tr>
         <tr>
@@ -33,7 +24,7 @@ const AppHeader = ({playerName, points, time}) => {
         <tr>
           <td>Time:</td>
           <td>
-            {Math.floor(duration.asHours())}:{addLeadingZero(duration.minutes())}:{addLeadingZero(duration.seconds())}
+            <FormattedTime value={duration} hour="numeric" minute="numeric" second="numeric" timeZone="utc" />
           </td>
         </tr>
         </tbody>

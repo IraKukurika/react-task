@@ -8,12 +8,12 @@ import {
   getWallWithFigure,
   isEnoughFreeSpace
 } from "../../helpers/gameHelpers";
+import {actionsTypes as loadGameActionTypes} from '../actions/loadGameActions';
 
 const defaultState = {
   wall: getInitialWall(),
   playerName: '',
-  started: false,
-  pause: false,
+  pause: true,
   points: 0,
   time: 0,
   finished: false,
@@ -21,7 +21,7 @@ const defaultState = {
   figurePosition: getInitialFigurePosition(),
 };
 
-export default function (state = defaultState, {type = '', payload: {playerName} = {}}) {
+export default function (state = defaultState, {type = '', payload: {playerName, gameData} = {}}) {
   switch (type) {
     case actionTypes.SET_PLAYER_NAME:
       return {
@@ -32,7 +32,7 @@ export default function (state = defaultState, {type = '', payload: {playerName}
     case actionTypes.START_GAME:
       return {
         ...state,
-        started: true
+        pause: false
       };
 
     case actionTypes.PAUSE_GAME:
@@ -136,6 +136,21 @@ export default function (state = defaultState, {type = '', payload: {playerName}
           ...state,
         }
       }
+    }
+
+    case loadGameActionTypes.GAME_DATA_FETCH_SUCCESS: {
+      const { playerName, time, points, wall, figure, figurePosition } = gameData;
+
+      return {
+        ...state,
+        playerName,
+        time,
+        points,
+        wall,
+        figure,
+        figurePosition,
+        pause: true,
+      };
     }
 
     default:

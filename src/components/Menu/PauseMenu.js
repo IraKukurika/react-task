@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 
 import {Menu, Button, Link} from './index';
 
-export const PauseMenu = ({onResume}) => (
+export const PauseMenu = ({onResume, onSave}) => (
   <Menu>
     <Button onClick={onResume}>Resume</Button>
-    <Link href='#'>Main menu</Link>
+    <Button onClick={onSave}>Save and exit</Button>
+    <Link to="/">Main menu</Link>
   </Menu>
 );
 

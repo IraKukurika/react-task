@@ -2,6 +2,9 @@ import styled from 'styled-components';
 
 export const AppMenu = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   .menu {
     text-align: center;
     text-shadow: 0 0 5px #ffffff;
